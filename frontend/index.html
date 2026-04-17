@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABAD AI — Brendinq və Etiketləmə Platforması</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark:   #1a6b3c;
+      --green-mid:    #2d9b5a;
+      --green-light:  #4eca7f;
+      --gold:         #c9952a;
+      --gold-light:   #f0c050;
+      --white:        #ffffff;
+      --off-white:    #f7f9f5;
+      --gray-100:     #f0f2ee;
+      --gray-200:     #dde3d8;
+      --gray-400:     #8fa385;
+      --gray-600:     #4a5c44;
+      --gray-900:     #1c2b1a;
+      --shadow-sm:    0 2px 8px rgba(26,107,60,0.10);
+      --shadow-md:    0 6px 24px rgba(26,107,60,0.14);
+      --shadow-lg:    0 16px 48px rgba(26,107,60,0.18);
+      --radius:       14px;
+      --radius-lg:    22px;
+      --transition:   0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--off-white);
+      color: var(--gray-900);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, var(--green-dark) 0%, #0f4a28 50%, #1a3d10 100%);
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: rgba(201,149,42,0.12);
+      pointer-events: none;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -40px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    .header-inner {
+      width: 100%;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-badge {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      margin-right: auto;
+    }
+
+    .header-text h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+
+    .header-text h1 span {
+      color: var(--gold-light);
+    }
+
+    .header-text p {
+      margin-top: 6px;
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.3px;
+    }
+
+    .header-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 30px;
+      padding: 8px 18px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    /* ── Main Layout ──────────────────────────────────────────────────────── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── Search Section ───────────────────────────────────────────────────── */
+    .search-section {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 36px 40px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 36px;
+    }
+
+    .search-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 18px 22px;
+      font-size: 1.05rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      color: var(--gray-900);
+      background: var(--gray-100);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .search-input::placeholder { color: var(--gray-400); font-weight: 400; }
+
+    .search-input:focus {
+      border-color: var(--green-mid);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(45,155,90,0.12);
+    }
+
+    .search-btn {
+      padding: 18px 36px;
+      background: linear-gradient(135deg, var(--green-mid) 0%, var(--green-dark) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(26,107,60,0.3);
+    }
+
+    .search-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(26,107,60,0.4);
+    }
+
+    .search-btn:active:not(:disabled) { transform: translateY(0); }
+
+    .search-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .search-hint {
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: var(--gray-400);
+      font-weight: 400;
+    }
+
+    .search-hint strong { color: var(--gray-600); font-weight: 600; }
+
+    /* ── Pipeline Progress ────────────────────────────────────────────────── */
+    .pipeline-section {
+      display: none;
+      margin-bottom: 36px;
+    }
+
+    .pipeline-section.visible { display: block; }
+
+    .pipeline-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gray-400);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 860px) {
+      .pipeline-steps { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .pipeline-steps { grid-template-columns: repeat(2, 1fr); }
+      .search-row { flex-direction: column; }
+      .search-section { padding: 24px 20px; }
+      .header-badge { display: none; }
+    }
+
+    .step-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 16px 12px;
+      text-align: center;
+      border: 2px solid var(--gray-200);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card.active {
+      border-color: var(--green-light);
+      box-shadow: 0 0 0 3px rgba(78,202,127,0.15);
+    }
+
+    .step-card.done {
+      border-color: var(--green-mid);
+      background: linear-gradient(135deg, #f0faf4 0%, var(--white) 100%);
+    }
+
+    .step-card.error {
+      border-color: #e05252;
+      background: #fff5f5;
+    }
+
+    .step-icon {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+
+    .step-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      line-height: 1.3;
+    }
+
+    .step-status {
+      position: absolute;
+      top: 8px; right: 8px;
+      font-size: 0.75rem;
+      line-height: 1;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid var(--gray-200);
+      border-top-color: var(--green-mid);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Results Area ─────────────────────────────────────────────────────── */
+    .results-section { display: none; }
+    .results-section.visible { display: block; }
+
+    .results-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gray-400);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .result-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+      border: 1px solid var(--gray-200);
+      animation: fadeSlideIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--gray-100);
+    }
+
+    .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--gray-400);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* ── Stage 1: Product Analysis ────────────────────────────────────────── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 640px) { .product-grid { grid-template-columns: 1fr; } }
+
+    .info-block {
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+
+    .info-block-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+
+    .info-block-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .tag {
+      background: var(--green-dark);
+      color: var(--white);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .tag.gold { background: var(--gold); }
+    .tag.light { background: var(--gray-200); color: var(--gray-600); }
+
+    /* ── Stage 2: Market Research ─────────────────────────────────────────── */
+    .market-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 640px) { .market-grid { grid-template-columns: 1fr; } }
+
+    .market-block { background: var(--gray-100); border-radius: var(--radius); padding: 18px 20px; }
+
+    .competitor-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .competitor-item:last-child { border-bottom: none; }
+
+    .competitor-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    /* ── Stage 3: Design / Colors ─────────────────────────────────────────── */
+    .color-palette {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .color-swatch {
+      width: 80px;
+      cursor: default;
+    }
+
+    .swatch-box {
+      width: 80px; height: 80px;
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 8px;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .swatch-box:hover { transform: scale(1.06); box-shadow: var(--shadow-md); }
+
+    .swatch-hex {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      font-family: monospace;
+      margin-bottom: 2px;
+    }
+
+    .swatch-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      line-height: 1.2;
+    }
+
+    .swatch-usage {
+      font-size: 0.66rem;
+      color: var(--gray-400);
+      margin-top: 2px;
+      line-height: 1.2;
+    }
+
+    .design-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 700px) { .design-grid { grid-template-columns: 1fr; } }
+
+    .design-block {
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+
+    /* ── Stage 4: Label Preview ───────────────────────────────────────────── */
+    .label-preview-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 700px) { .label-preview-wrap { grid-template-columns: 1fr; } }
+
+    .label-card {
+      background: linear-gradient(160deg, #fffef8 0%, #f5f9f0 100%);
+      border: 2px solid var(--gold);
+      border-radius: 18px;
+      padding: 28px 24px;
+      box-shadow: 0 6px 28px rgba(201,149,42,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .label-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--green-dark), var(--gold), var(--green-mid));
+    }
+
+    .label-brand {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--green-dark);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .label-product-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      line-height: 1.15;
+      margin-bottom: 4px;
+    }
+
+    .label-tagline {
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .label-divider {
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin: 12px 0;
+    }
+
+    .label-desc {
+      font-size: 0.8rem;
+      color: var(--gray-600);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .label-meta {
+      font-size: 0.72rem;
+      color: var(--gray-600);
+      margin-bottom: 5px;
+    }
+
+    .label-meta strong { color: var(--gray-900); font-weight: 700; }
+
+    .allergen-box {
+      background: #fff8e6;
+      border: 1px solid var(--gold-light);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-top: 10px;
+      font-size: 0.72rem;
+      color: #7a5a00;
+      font-weight: 600;
+    }
+
+    .nutrition-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      margin-top: 6px;
+    }
+
+    .nutrition-table th {
+      background: var(--green-dark);
+      color: var(--white);
+      padding: 7px 10px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .nutrition-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--gray-900);
+    }
+
+    .nutrition-table tr:last-child td { border-bottom: none; }
+    .nutrition-table tr:nth-child(even) td { background: var(--gray-100); }
+
+    /* ── Stage 5: Compliance ──────────────────────────────────────────────── */
+    .compliance-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge.uygun {
+      background: #e8f9ee;
+      color: #1a6b3c;
+      border: 2px solid #4eca7f;
+    }
+
+    .status-badge.qismen {
+      background: #fff8e6;
+      color: #7a5a00;
+      border: 2px solid var(--gold);
+    }
+
+    .status-badge.uygun-deyil {
+      background: #fff0f0;
+      color: #8b0000;
+      border: 2px solid #e05252;
+    }
+
+    .issues-list { margin-top: 16px; }
+
+    .issue-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+    }
+
+    .issue-item.kritik { background: #fff0f0; border-left: 4px solid #e05252; }
+    .issue-item.xeberdarliq { background: #fff8e6; border-left: 4px solid var(--gold); }
+    .issue-item.melumat { background: #eef6ff; border-left: 4px solid #5b9bd5; }
+
+    .issue-severity {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+
+    .issue-item.kritik .issue-severity { color: #c0392b; }
+    .issue-item.xeberdarliq .issue-severity { color: #a07000; }
+    .issue-item.melumat .issue-severity { color: #2563a0; }
+
+    .issue-desc { font-size: 0.83rem; color: var(--gray-900); font-weight: 500; }
+    .issue-rec { font-size: 0.78rem; color: var(--gray-400); margin-top: 4px; }
+
+    .compliance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) { .compliance-grid { grid-template-columns: 1fr; } }
+
+    .compliance-block {
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+
+    .compliance-block-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 5px 0;
+      font-size: 0.8rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .check-row:last-child { border-bottom: none; }
+
+    .check-icon { flex-shrink: 0; font-size: 0.9rem; margin-top: 1px; }
+
+    /* ── Stage 6: Language Check ──────────────────────────────────────────── */
+    .score-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .score-box {
+      flex: 1;
+      min-width: 130px;
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      text-align: center;
+    }
+
+    .score-value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--green-dark);
+      line-height: 1;
+    }
+
+    .score-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 4px;
+    }
+
+    .quality-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: var(--green-dark);
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+
+    .error-item {
+      background: #fff8e6;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .error-original {
+      font-size: 0.82rem;
+      color: #c0392b;
+      font-weight: 600;
+      text-decoration: line-through;
+      margin-bottom: 3px;
+    }
+
+    .error-corrected {
+      font-size: 0.82rem;
+      color: #1a6b3c;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .error-explanation { font-size: 0.76rem; color: var(--gray-600); }
+
+    .improvements-list { list-style: none; }
+
+    .improvements-list li {
+      padding: 8px 0;
+      font-size: 0.83rem;
+      color: var(--gray-900);
+      border-bottom: 1px solid var(--gray-200);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .improvements-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--green-mid);
+      font-weight: 700;
+    }
+
+    .improvements-list li:last-child { border-bottom: none; }
+
+    /* ── Error Card ───────────────────────────────────────────────────────── */
+    .error-card {
+      background: #fff0f0;
+      border: 2px solid #e05252;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      color: #8b0000;
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    /* ── Misc ─────────────────────────────────────────────────────────────── */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+      margin-top: 18px;
+    }
+
+    .text-block {
+      font-size: 0.88rem;
+      color: var(--gray-900);
+      line-height: 1.65;
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+    }
+
+    .final-verdict {
+      background: linear-gradient(135deg, var(--green-dark), #0f4a28);
+      color: var(--white);
+      border-radius: var(--radius);
+      padding: 16px 22px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-top: 16px;
+    }
+
+    .ingredient-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .ingredient-item {
+      background: var(--gray-100);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ingredient-pct {
+      background: var(--green-dark);
+      color: var(--white);
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    /* ── Stage 7: Label Image ─────────────────────────────────────────────── */
+    .label-image-wrap {
+      text-align: center;
+    }
+
+    .label-image-wrap img {
+      max-width: 100%;
+      max-height: 520px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 2px solid var(--gold);
+    }
+
+    .label-image-prompt {
+      margin-top: 16px;
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      font-style: italic;
+      line-height: 1.5;
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      text-align: left;
+    }
+
+    /* ── Scrollbar ────────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--gray-100); }
+    ::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ────────────────────────────────────────────────────────────── -->
+<header>
+  <div class="header-inner">
+    <div class="logo-badge">
+      <img src="/static/logo/abad_logo.png" alt="ABAD — Ailə Biznesinə Asan Dəstək" style="height:90px;width:auto;display:block;">
+    </div>
+    <div class="header-text">
+      <h1>ABAD <span>AI</span></h1>
+      <p>Brendinq və Etiketləmə Platforması</p>
+    </div>
+    <div class="header-badge">v1.0 — ASAN AI Hub</div>
+  </div>
+</header>
+
+<!-- ── Main ───────────────────────────────────────────────────────────────── -->
+<main>
+
+  <!-- Search -->
+  <div class="search-section">
+    <label class="search-label" for="productInput">Məhsul daxil edin</label>
+    <div class="search-row">
+      <input
+        id="productInput"
+        class="search-input"
+        type="text"
+        placeholder="Məhsulunuzu daxil edin... (məsələn: heyva mürəbbəsi)"
+        autocomplete="off"
+      />
+      <button class="search-btn" id="analyzeBtn" onclick="startAnalysis()">
+        Analiz Et
+      </button>
+    </div>
+    <p class="search-hint">
+      Məsələn: <strong>heyva mürəbbəsi</strong>, <strong>armud limonadı</strong>,
+      <strong>badımcan kürüsü</strong>, <strong>kənd pendiri</strong>
+    </p>
+  </div>
+
+  <!-- Pipeline Progress -->
+  <div class="pipeline-section" id="pipelineSection">
+    <p class="pipeline-title">Analiz mərhələləri</p>
+    <div class="pipeline-steps">
+      <div class="step-card" id="step-product_analysis">
+        <span class="step-icon">🔍</span>
+        <div class="step-name">Məhsul Analizi</div>
+        <span class="step-status" id="status-product_analysis"></span>
+      </div>
+      <div class="step-card" id="step-market_research">
+        <span class="step-icon">📊</span>
+        <div class="step-name">Bazar Tədqiqatı</div>
+        <span class="step-status" id="status-market_research"></span>
+      </div>
+      <div class="step-card" id="step-design_recommendations">
+        <span class="step-icon">🎨</span>
+        <div class="step-name">Dizayn Tövsiyələri</div>
+        <span class="step-status" id="status-design_recommendations"></span>
+      </div>
+      <div class="step-card" id="step-label_text_generation">
+        <span class="step-icon">📝</span>
+        <div class="step-name">Etiket Mətninin Yaradılması</div>
+        <span class="step-status" id="status-label_text_generation"></span>
+      </div>
+      <div class="step-card" id="step-label_image">
+        <span class="step-icon">🖼️</span>
+        <div class="step-name">Vizual Etiket Yaradılması</div>
+        <span class="step-status" id="status-label_image"></span>
+      </div>
+      <div class="step-card" id="step-compliance_check">
+        <span class="step-icon">✅</span>
+        <div class="step-name">Uyğunluq Yoxlaması</div>
+        <span class="step-status" id="status-compliance_check"></span>
+      </div>
+      <div class="step-card" id="step-language_check">
+        <span class="step-icon">🔤</span>
+        <div class="step-name">Dil Yoxlaması</div>
+        <span class="step-status" id="status-language_check"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="results-section" id="resultsSection">
+    <p class="results-title">Nəticələr</p>
+    <div id="resultsContainer"></div>
+  </div>
+
+</main>
+
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   State
+   ───────────────────────────────────────────────────────────────────────── */
+let currentEventSource = null;
+let _designData    = {};
+let _stage1Data    = null;
+let _stage2Data    = null;
+let _stage3Data    = null;
+let _selectedColors = [];
+let _currentProduct = '';
+const STAGE_ORDER = [
+  'product_analysis',
+  'market_research',
+  'design_recommendations',
+  'label_text_generation',
+  'label_image',
+  'compliance_check',
+  'language_check',
+];
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Entry point
+   ───────────────────────────────────────────────────────────────────────── */
+function startAnalysis() {
+  const input = document.getElementById('productInput');
+  const product = input.value.trim();
+  if (!product) {
+    input.focus();
+    input.style.borderColor = '#e05252';
+    setTimeout(() => (input.style.borderColor = ''), 1500);
+    return;
+  }
+
+  _currentProduct = product;
+
+  // Reset UI
+  if (currentEventSource) {
+    currentEventSource.close();
+    currentEventSource = null;
+  }
+
+  resetUI();
+  document.getElementById('pipelineSection').classList.add('visible');
+  document.getElementById('resultsSection').classList.add('visible');
+  document.getElementById('analyzeBtn').disabled = true;
+
+  // Mark first stage active
+  setStepActive('product_analysis');
+
+  fetchStream(product);
+}
+
+document.getElementById('productInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') startAnalysis();
+});
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Fetch / SSE
+   ───────────────────────────────────────────────────────────────────────── */
+async function _readSSEStream(response) {
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const jsonStr = line.slice(6).trim();
+      if (!jsonStr) continue;
+      try { handleChunk(JSON.parse(jsonStr)); }
+      catch (e) { console.warn('JSON parse error:', jsonStr, e); }
+    }
+  }
+}
+
+async function fetchStream(product) {
+  try {
+    const response = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product }),
+    });
+    if (!response.ok) {
+      showGlobalError((await response.json()).detail || 'Server xətası baş verdi.');
+      document.getElementById('analyzeBtn').disabled = false;
+      return;
+    }
+    await _readSSEStream(response);
+  } catch (err) {
+    showGlobalError('Serverə qoşulmaq mümkün olmadı: ' + err.message);
+    document.getElementById('analyzeBtn').disabled = false;
+  }
+  // Button stays disabled — re-enabled after phase 2 completes
+}
+
+async function fetchStreamPhase2() {
+  try {
+    const response = await fetch('/api/analyze/continue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        product: _currentProduct,
+        stage1: _stage1Data,
+        stage2: _stage2Data,
+        stage3: _stage3Data,
+        user_colors: _selectedColors,
+      }),
+    });
+    if (!response.ok) {
+      showGlobalError((await response.json()).detail || 'Server xətası baş verdi.');
+      document.getElementById('analyzeBtn').disabled = false;
+      return;
+    }
+    await _readSSEStream(response);
+  } catch (err) {
+    showGlobalError('Serverə qoşulmaq mümkün olmadı: ' + err.message);
+  }
+  document.getElementById('analyzeBtn').disabled = false;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Chunk handler
+   ───────────────────────────────────────────────────────────────────────── */
+function handleChunk(chunk) {
+  const { stage, status, data } = chunk;
+
+  if (stage === 'done') return;
+
+  if (status === 'error') {
+    setStepError(stage);
+    appendErrorCard(stage, data.error || 'Naməlum xəta');
+    // Activate next stage
+    activateNextStage(stage);
+    return;
+  }
+
+  if (status === 'complete') {
+    setStepDone(stage);
+    renderStageResult(stage, data);
+    if (stage === 'design_recommendations') {
+      showColorPicker(); // pause — wait for user colour confirmation
+    } else {
+      activateNextStage(stage);
+    }
+  }
+}
+
+function activateNextStage(current) {
+  const idx = STAGE_ORDER.indexOf(current);
+  if (idx !== -1 && idx < STAGE_ORDER.length - 1) {
+    setStepActive(STAGE_ORDER[idx + 1]);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Step card state
+   ───────────────────────────────────────────────────────────────────────── */
+function setStepActive(stage) {
+  const card = document.getElementById('step-' + stage);
+  const status = document.getElementById('status-' + stage);
+  if (!card) return;
+  card.classList.remove('done', 'error');
+  card.classList.add('active');
+  status.innerHTML = '<span class="spinner"></span>';
+}
+
+function setStepDone(stage) {
+  const card = document.getElementById('step-' + stage);
+  const status = document.getElementById('status-' + stage);
+  if (!card) return;
+  card.classList.remove('active', 'error');
+  card.classList.add('done');
+  status.innerHTML = '✅';
+}
+
+function setStepError(stage) {
+  const card = document.getElementById('step-' + stage);
+  const status = document.getElementById('status-' + stage);
+  if (!card) return;
+  card.classList.remove('active', 'done');
+  card.classList.add('error');
+  status.innerHTML = '❌';
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Render helpers
+   ───────────────────────────────────────────────────────────────────────── */
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function objToStr(val) {
+  if (!val) return '';
+  if (typeof val === 'string') return val;
+  if (typeof val === 'object') return Object.entries(val).map(([k, v]) => `${k}: ${v}`).join(' | ');
+  return String(val);
+}
+
+function appendErrorCard(stage, message) {
+  const container = document.getElementById('resultsContainer');
+  const div = document.createElement('div');
+  div.className = 'error-card';
+  div.innerHTML = `<strong>Xəta (${esc(stage)}):</strong> ${esc(message)}`;
+  container.appendChild(div);
+}
+
+function showGlobalError(message) {
+  document.getElementById('pipelineSection').classList.add('visible');
+  document.getElementById('resultsSection').classList.add('visible');
+  const container = document.getElementById('resultsContainer');
+  const div = document.createElement('div');
+  div.className = 'error-card';
+  div.innerHTML = `<strong>Sistem xətası:</strong> ${esc(message)}`;
+  container.appendChild(div);
+}
+
+function appendCard(icon, title, subtitle, bodyHTML) {
+  const container = document.getElementById('resultsContainer');
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.innerHTML = `
+    <div class="card-header">
+      <div class="card-icon">${icon}</div>
+      <div>
+        <div class="card-title">${esc(title)}</div>
+        <div class="card-subtitle">${esc(subtitle)}</div>
+      </div>
+    </div>
+    ${bodyHTML}
+  `;
+  container.appendChild(card);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Stage renderers
+   ───────────────────────────────────────────────────────────────────────── */
+function renderStageResult(stage, data) {
+  switch (stage) {
+    case 'product_analysis':       _stage1Data = data; renderProductAnalysis(data); break;
+    case 'market_research':        _stage2Data = data; renderMarketResearch(data); break;
+    case 'design_recommendations': _stage3Data = data; _designData = data;
+                                   _selectedColors = (data.colors || []).map(c => ({...c}));
+                                   renderDesign(data); break;
+    case 'label_text_generation':  renderLabel(data); break;
+    case 'compliance_check':       renderCompliance(data); break;
+    case 'language_check':         renderLanguage(data); break;
+    case 'label_image':            renderLabelBackground(data); break;
+  }
+}
+
+/* 1 ── Product Analysis */
+function renderProductAnalysis(d) {
+  const sellingPoints = (d.selling_points || [])
+    .map(p => `<span class="tag">${esc(p)}</span>`).join('');
+  const ingredients = (d.ingredients || [])
+    .map(i => `<span class="tag light">${esc(i)}</span>`).join('');
+
+  const body = `
+    <div class="product-grid">
+      <div class="info-block">
+        <div class="info-block-label">Məhsul adı</div>
+        <div class="info-block-value">${esc(d.name)}</div>
+      </div>
+      <div class="info-block">
+        <div class="info-block-label">Kateqoriya</div>
+        <div class="info-block-value">${esc(d.category)}</div>
+      </div>
+      <div class="info-block">
+        <div class="info-block-label">Hədəf bazar</div>
+        <div class="info-block-value">${esc(d.target_market)}</div>
+      </div>
+      <div class="info-block">
+        <div class="info-block-label">Əsas üstünlüklər</div>
+        <div class="tag-list">${sellingPoints}</div>
+      </div>
+    </div>
+    <div class="section-label">Tərkib / Komponentlər</div>
+    <div class="tag-list">${ingredients}</div>
+  `;
+  appendCard('🔍', 'Məhsul Analizi', 'Məhsul haqqında ətraflı məlumat', body);
+}
+
+/* 2 ── Market Research */
+function toStr(val) {
+  if (val === null || val === undefined) return '—';
+  if (typeof val === 'string') return val;
+  if (Array.isArray(val)) return val.map(toStr).join(', ');
+  if (typeof val === 'object') return Object.values(val).map(toStr).join(' | ');
+  return String(val);
+}
+
+function renderMarketResearch(d) {
+  const competitors = (d.competitors || []).map(c => `
+    <div class="competitor-item">
+      <div class="competitor-dot"></div>
+      <div>
+        <div style="font-size:0.85rem;font-weight:700;color:var(--gray-900)">${esc(c.name)}</div>
+        <div style="font-size:0.78rem;color:var(--gray-600)">${esc(c.positioning)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const body = `
+    <div class="market-grid">
+      <div class="market-block">
+        <div class="info-block-label">Bazar imkanı</div>
+        <div style="font-size:0.85rem;color:var(--gray-900);line-height:1.55">${esc(d.market_opportunity)}</div>
+      </div>
+      <div class="market-block">
+        <div class="info-block-label">Qiymət aralığı</div>
+        <div style="font-size:0.85rem;color:var(--gray-900);line-height:1.55">${esc(toStr(d.price_range))}</div>
+      </div>
+      <div class="market-block">
+        <div class="info-block-label">İstehlakçı üstünlükləri</div>
+        <div style="font-size:0.85rem;color:var(--gray-900);line-height:1.55">${esc(toStr(d.consumer_preferences))}</div>
+      </div>
+      <div class="market-block">
+        <div class="info-block-label">Mövsümi tendensiyalar</div>
+        <div style="font-size:0.85rem;color:var(--gray-900);line-height:1.55">${esc(toStr(d.seasonal_trends))}</div>
+      </div>
+    </div>
+    <div class="section-label">Rəqiblər</div>
+    <div class="market-block">${competitors || '<em style="color:var(--gray-400);font-size:0.82rem">Məlumat yoxdur</em>'}</div>
+  `;
+  appendCard('📊', 'Bazar Tədqiqatı', 'Azərbaycan bazarına uyğun analiz', body);
+}
+
+/* 3 ── Design Recommendations */
+function renderDesign(d) {
+  const colors = (d.colors || []).map(c => {
+    const hex = c.hex || '#cccccc';
+    const textColor = isLightColor(hex) ? '#1c2b1a' : '#ffffff';
+    return `
+      <div class="color-swatch">
+        <div class="swatch-box" style="background:${esc(hex)};position:relative;">
+          <span style="position:absolute;bottom:6px;right:7px;font-size:0.6rem;font-weight:700;color:${textColor};opacity:0.85">${esc(hex)}</span>
+        </div>
+        <div class="swatch-name">${esc(c.name)}</div>
+        <div class="swatch-usage">${esc(c.usage)}</div>
+      </div>
+    `;
+  }).join('');
+
+  const logoConcepts = (d.logo_concepts || []).map(l => {
+    const text = typeof l === 'string' ? l : (l.concept || l.name || l.description || l.idea || Object.values(l).join(' — '));
+    return `<span class="tag gold">${esc(text)}</span>`;
+  }).join('');
+
+  const body = `
+    <div class="section-label">Rəng Palitirası</div>
+    <div class="color-palette">${colors}</div>
+    <div class="design-grid">
+      <div class="design-block">
+        <div class="info-block-label">Tipografiya</div>
+        <div style="font-size:0.83rem;line-height:1.55">${esc(objToStr(d.typography))}</div>
+      </div>
+      <div class="design-block">
+        <div class="info-block-label">Vizual stil</div>
+        <div style="font-size:0.83rem;line-height:1.55">${esc(objToStr(d.visual_style))}</div>
+      </div>
+      <div class="design-block">
+        <div class="info-block-label">Qablaşdırma</div>
+        <div style="font-size:0.83rem;line-height:1.55">${esc(objToStr(d.packaging))}</div>
+      </div>
+    </div>
+    <div class="section-label">Loqo Konsepsiyaları</div>
+    <div class="tag-list">${logoConcepts || '<em style="color:var(--gray-400);font-size:0.82rem">—</em>'}</div>
+  `;
+  appendCard('🎨', 'Dizayn Tövsiyələri', 'Rəng, tipografiya və qablaşdırma istiqamətləri', body);
+}
+
+function isLightColor(hex) {
+  hex = hex.replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  const r = parseInt(hex.substr(0,2),16);
+  const g = parseInt(hex.substr(2,2),16);
+  const b = parseInt(hex.substr(4,2),16);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 155;
+}
+
+/* 4 ── Label */
+function renderLabel(d) {
+  const colors  = (_designData.colors || []);
+  const primary = (colors[0] || {}).hex || '#1a6b3c';
+
+  // ── Nutrition ──────────────────────────────────────────────────────────
+  const n    = d.nutrition || {};
+  const kcal = n.energy_kcal || 0;
+  const kj   = Math.round(kcal * 4.184);
+
+  // Detect beverage → use ml instead of q (whole-word matching)
+  const _bevKw = ['beverage','drink','juice','lemonade','limonad','içki','su','water','çay','tea','coffee','qəhvə','kompot','şərbət','nektar','soda','ayran','kefir','süd','milk','şirə','smoothie','kokteyl','mineral','qazlı'];
+  const _s1words = new Set(((_stage1Data.category||'')+' '+(_stage1Data.name||'')).toLowerCase().split(/\s+/));
+  const _unit = _bevKw.some(k => _s1words.has(k)) ? 'ml' : 'q';
+
+  const nutritionRows = [
+    ['Enerji',         `${kj} kC / ${kcal} kkal`],
+    ['Zülal',          `${n.protein_g ?? '—'} q`],
+    ['Yağ',            `${n.fat_g     ?? '—'} q`],
+    ['Karbohidratlar', `${n.carbs_g   ?? '—'} q`],
+    ['Şəkər',          `${n.sugar_g   ?? '—'} q`],
+    ['Duz',            `${n.salt_g    ?? '—'} q`],
+  ].map(([lbl, val], i) => `
+    <tr style="background:${i%2===0?'#f4faf6':'#fff'}">
+      <td style="padding:6px 10px;font-size:0.82rem;color:#333">${esc(lbl)}</td>
+      <td style="padding:6px 10px;font-size:0.82rem;font-weight:700;color:#222">${esc(val)}</td>
+    </tr>`).join('');
+
+  // ── Ingredients ────────────────────────────────────────────────────────
+  const ingStr = (d.ingredients || []).map(i => {
+    const name = typeof i === 'string' ? i : (i.name || '');
+    const pct  = typeof i === 'string' ? null : i.percentage;
+    return `<span style="display:inline-block;background:${esc(primary)};color:#fff;
+      border-radius:20px;padding:3px 10px;font-size:0.75rem;margin:3px">${esc(name)}${pct ? ` ${esc(String(pct))}%` : ''}</span>`;
+  }).join('');
+
+  // ── Allergens ──────────────────────────────────────────────────────────
+  const allergens = (d.allergens || []);
+
+  const body = `
+    <div style="font-family:'Montserrat',sans-serif;max-width:680px">
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:1.4rem;font-weight:800;color:${esc(primary)}">${esc(d.product_name || '')}</div>
+        <div style="font-style:italic;color:#666;margin-top:4px">${esc(d.tagline || '')}</div>
+        <div style="margin-top:8px;color:#444;font-size:0.88rem;line-height:1.6">${esc(d.description || '')}</div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${esc(primary)};margin-bottom:8px">QİDALILIQ DƏYƏRİ (100 ${_unit.toUpperCase()}-A GÖRƏ)</div>
+        <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;border:1px solid #e0ede5">
+          <thead><tr style="background:${esc(primary)}">
+            <th style="padding:8px 10px;text-align:left;color:#fff;font-size:0.82rem">Göstərici</th>
+            <th style="padding:8px 10px;text-align:left;color:#fff;font-size:0.82rem">Miqdar</th>
+          </tr></thead>
+          <tbody>${nutritionRows}</tbody>
+        </table>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${esc(primary)};margin-bottom:8px">TƏRKİB</div>
+        <div>${ingStr || '—'}</div>
+      </div>
+
+      ${allergens.length ? `
+      <div style="background:#fff8e1;border:1px solid #f9a825;border-radius:10px;padding:12px 16px;margin-bottom:16px">
+        <span style="font-weight:700;color:#e65100">⚠ Allergen:</span>
+        <span style="color:#5d4037;font-size:0.88rem"> ${allergens.map(a => esc(a)).join(', ')}</span>
+      </div>` : ''}
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.82rem;color:#444">
+        <div><strong>Saxlama:</strong> ${esc(d.storage || '—')}</div>
+        <div><strong>Miqdar:</strong> ${esc(d.quantity || '—')}</div>
+        <div><strong>İstehsal tarixi:</strong> ${esc(d.production_date_placeholder || 'GG.AA.İİİİ')}</div>
+        <div><strong>Yararlılıq müddəti:</strong> ${esc(d.shelf_life || '—')}</div>
+        <div><strong>Mənşəyi:</strong> ${esc(d.origin || 'Azərbaycan')}</div>
+        <div><strong>İstehsalçı:</strong> ${esc(d.manufacturer || 'ABAD')}</div>
+      </div>
+
+    </div>`;
+
+  appendCard('📝', 'Etiket Mətni', 'Tam mətn məlumatları və qidalılıq dəyəri', body);
+}
+
+function _downloadLabelImg(id, filename) {
+  const img = document.querySelector(`#${id} img`);
+  if (img) {
+    const a = document.createElement('a'); a.href = img.src; a.download = filename; a.click();
+  }
+}
+function downloadFrontLabel() { _downloadLabelImg('visual-label-front', 'abad-on-etiket.png'); }
+function downloadBackLabel()  { _downloadLabelImg('visual-label',       'abad-arxa-etiket.png'); }
+
+/* 4 ── Label Images (creates the full visual label card) */
+function renderLabelBackground(d) {
+  const colors  = (_designData.colors || []);
+  const primary = (colors[0] || {}).hex || '#1a6b3c';
+  const accent  = (colors[2] || {}).hex || '#2d9b5a';
+
+  function imgHtml(src, mime) {
+    return `<img src="data:${esc(mime)};base64,${src}"
+      style="width:100%;height:100%;object-fit:cover;display:block">`;
+  }
+
+  const frontContent = (d.front && !d.error)
+    ? imgHtml(d.front.image_base64, d.front.mime_type)
+    : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:${esc(primary)};font-size:0.8rem">Şəkil yaradılmadı</div>`;
+
+  const backContent = (d.back && !d.error)
+    ? imgHtml(d.back.image_base64, d.back.mime_type)
+    : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:${esc(primary)};font-size:0.8rem">Şəkil yaradılmadı</div>`;
+
+  // Match label template ratio exactly: 630×980 → display at 440×684
+  const LW = 440, LH = Math.round(440 * 980 / 630);
+
+  const btnStyle = `margin-top:10px;width:${LW}px;padding:10px;
+    background:linear-gradient(135deg,${esc(primary)},${esc(accent)});
+    color:#fff;border:none;border-radius:10px;font-size:0.82rem;
+    font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;
+    box-shadow:0 4px 14px rgba(0,0,0,0.15)`;
+
+  const labelBox = (id, content) =>
+    `<div id="${id}" style="width:${LW}px;height:${LH}px;
+      border:3px solid ${esc(primary)};border-radius:16px;
+      overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.18);
+      position:relative">
+      ${content}
+    </div>`;
+
+  const body = `
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+      <div>
+        <div style="text-align:center;font-size:0.72rem;font-weight:700;color:var(--gray-600);
+          letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">ÖN ETİKET</div>
+        ${labelBox('visual-label-front', frontContent)}
+        <button onclick="downloadFrontLabel()" style="${btnStyle}">⬇ Ön etiket PNG</button>
+      </div>
+      <div>
+        <div style="text-align:center;font-size:0.72rem;font-weight:700;color:var(--gray-600);
+          letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">ARXA ETİKET</div>
+        ${labelBox('visual-label', backContent)}
+        <button onclick="downloadBackLabel()" style="${btnStyle}">⬇ Arxa etiket PNG</button>
+      </div>
+    </div>`;
+
+  appendCard('🖼️', 'Vizual Etiket', 'Hazır etiket dizaynı — PNG olaraq yüklənə bilər', body);
+}
+
+/* 5 ── Compliance */
+function renderCompliance(d) {
+  const status = (d.overall_status || '').toUpperCase();
+  let badgeClass = 'qismen';
+  let badgeIcon = '⚠️';
+  if (status === 'UYĞUN') { badgeClass = 'uygun'; badgeIcon = '✅'; }
+  else if (status === 'UYĞUN DEYİL') { badgeClass = 'uygun-deyil'; badgeIcon = '❌'; }
+
+  const issues = (d.issues || []).map(iss => {
+    const cls = iss.severity === 'kritik' ? 'kritik'
+              : iss.severity === 'xəbərdarlıq' ? 'xeberdarliq' : 'melumat';
+    return `
+      <div class="issue-item ${cls}">
+        <div>
+          <div class="issue-severity">${esc(iss.severity)}</div>
+        </div>
+        <div>
+          <div class="issue-desc">${esc(iss.description)}</div>
+          ${iss.recommendation ? `<div class="issue-rec">→ ${esc(iss.recommendation)}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const recs = (d.recommendations || [])
+    .map(r => `<div style="padding:7px 0;border-bottom:1px solid var(--gray-200);font-size:0.82rem">→ ${esc(r)}</div>`)
+    .join('');
+
+  function renderComplianceBlock(title, obj) {
+    if (!obj || typeof obj !== 'object') return '';
+    const rows = Object.entries(obj).map(([k, v]) => {
+      let passed = false;
+      let note = '';
+      if (typeof v === 'boolean') { passed = v; }
+      else if (typeof v === 'object' && v !== null) {
+        passed = v.passed !== undefined ? v.passed : (v.status === true || v.status === 'true');
+        note = v.notes || v.note || '';
+      } else if (typeof v === 'string') {
+        note = v;
+        passed = !v.toLowerCase().includes('yoxdur') && !v.toLowerCase().includes('çatışmır');
+      }
+      const icon = passed ? '✅' : '❌';
+      return `
+        <div class="check-row">
+          <span class="check-icon">${icon}</span>
+          <div>
+            <div style="font-weight:600">${esc(k)}</div>
+            ${note ? `<div style="font-size:0.74rem;color:var(--gray-400)">${esc(note)}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="compliance-block">
+        <div class="compliance-block-title">${esc(title)}</div>
+        ${rows}
+      </div>
+    `;
+  }
+
+  const body = `
+    <div class="compliance-header">
+      <div class="status-badge ${badgeClass}">${badgeIcon} ${esc(d.overall_status)}</div>
+    </div>
+    ${issues ? `<div class="section-label">Aşkar edilmiş məsələlər</div><div class="issues-list">${issues}</div>` : ''}
+    <div class="compliance-grid">
+      ${renderComplianceBlock('Azərbaycan Qanunvericiliyi (17.2.1)', d.law_compliance)}
+      ${renderComplianceBlock('ГОСТ Standartları', d.gost_compliance)}
+      ${renderComplianceBlock('AZS Standartları', d.azs_compliance)}
+      ${renderComplianceBlock('AQTA Tələbləri', d.aqta_compliance)}
+    </div>
+    ${recs ? `<div class="section-label" style="margin-top:20px">Tövsiyələr</div><div class="market-block">${recs}</div>` : ''}
+  `;
+  appendCard('✅', 'Uyğunluq Yoxlaması', 'Qanunvericilik və standartlara uyğunluq analizi', body);
+}
+
+/* 6 ── Language */
+function renderLanguage(d) {
+  const errors = (d.errors || []).map(e => `
+    <div class="error-item">
+      <div class="error-original">${esc(e.original)}</div>
+      <div class="error-corrected">✓ ${esc(e.corrected)}</div>
+      <div class="error-explanation">${esc(e.explanation)}</div>
+    </div>
+  `).join('');
+
+  const improvements = (d.improvements || []).map(i =>
+    `<li>${esc(i)}</li>`
+  ).join('');
+
+  const body = `
+    <span class="quality-badge">${esc(d.overall_quality || '—')}</span>
+    <div class="score-row">
+      <div class="score-box">
+        <div class="score-value">${d.spelling_score ?? '—'}</div>
+        <div class="score-label">İmla bal</div>
+      </div>
+      <div class="score-box">
+        <div class="score-value">${d.grammar_score ?? '—'}</div>
+        <div class="score-label">Qrammatika bal</div>
+      </div>
+    </div>
+    ${errors ? `<div class="section-label">Aşkar edilmiş xətalar</div>${errors}` : ''}
+    ${improvements ? `<div class="section-label">Təkmilləşdirmə tövsiyələri</div><ul class="improvements-list">${improvements}</ul>` : ''}
+    ${d.final_verdict ? `<div class="final-verdict">${esc(d.final_verdict)}</div>` : ''}
+  `;
+  appendCard('🔤', 'Dil Yoxlaması', 'Azərbaycan dilinin orfoqrafik və qrammatik analizi', body);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Colour picker (between phase 1 and phase 2)
+   ───────────────────────────────────────────────────────────────────────── */
+let _chosenColorIdx = 0; // index of the user-selected primary colour
+
+function showColorPicker() {
+  const container = document.getElementById('resultsContainer');
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.id = 'colorPickerCard';
+
+  const primaryHex = (_selectedColors[0] || {}).hex || '#1a6b3c';
+
+  const swatches = _selectedColors.map((c, i) => {
+    const hex = c.hex || '#cccccc';
+    const textColor = isLightColor(hex) ? '#1c2b1a' : '#ffffff';
+    const selected = i === _chosenColorIdx;
+    return `
+      <div class="color-swatch" id="swatchWrap_${i}" onclick="selectColor(${i})" style="cursor:pointer;transition:transform .15s">
+        <div class="swatch-box" style="background:${hex};position:relative;
+          outline:${selected ? `4px solid #222` : '3px solid transparent'};
+          outline-offset:2px;border-radius:12px;transition:outline .15s">
+          <span style="position:absolute;bottom:6px;right:7px;font-size:0.6rem;font-weight:700;color:${textColor};opacity:0.85">${hex}</span>
+        </div>
+        <div class="swatch-name">${esc(c.name || '')}</div>
+        <div class="swatch-usage" style="font-size:0.7rem;color:#888">${esc(c.usage || '')}</div>
+      </div>`;
+  }).join('');
+
+  card.innerHTML = `
+    <div class="card-header">
+      <div class="card-icon">🎨</div>
+      <div>
+        <div class="card-title">Əsas Rəngi Seçin</div>
+        <div class="card-subtitle">AI tövsiyə etdiyi rənglərdən birini seçin</div>
+      </div>
+    </div>
+    <p style="font-size:0.85rem;color:#666;margin:12px 0 16px">
+      Əsas rəng kimi istifadə etmək istədiyiniz rəngi seçin. Seçdikdən sonra "Davam et" düyməsini basın.
+    </p>
+    <div class="color-palette" style="margin-bottom:28px" id="colorSwatches">${swatches}</div>
+    <button onclick="confirmColors()" style="
+      display:inline-block;padding:12px 36px;
+      background:linear-gradient(135deg,${primaryHex},#155a2e);
+      color:#fff;border:none;border-radius:10px;font-size:0.9rem;
+      font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;
+      box-shadow:0 4px 14px rgba(0,0,0,0.2);letter-spacing:0.5px">
+      Davam et →
+    </button>`;
+
+  container.appendChild(card);
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function selectColor(idx) {
+  _chosenColorIdx = idx;
+  // Re-render swatches in place
+  const colors = _selectedColors;
+  colors.forEach((c, i) => {
+    const wrap = document.getElementById('swatchWrap_' + i);
+    if (!wrap) return;
+    const box = wrap.querySelector('.swatch-box');
+    const hex = c.hex || '#cccccc';
+    const textColor = isLightColor(hex) ? '#1c2b1a' : '#ffffff';
+    const selected = i === idx;
+    box.style.outline = selected ? '4px solid #222' : '3px solid transparent';
+    // update checkmark
+    const existing = box.querySelector('span.checkmark');
+    if (selected && !existing) {
+    } else if (!selected && existing) {
+      existing.remove();
+    }
+  });
+}
+
+function confirmColors() {
+  // Move chosen colour to index 0 (primary) and keep rest as-is
+  const chosen = _selectedColors.splice(_chosenColorIdx, 1)[0];
+  _selectedColors.unshift(chosen);
+  _chosenColorIdx = 0;
+
+  const card = document.getElementById('colorPickerCard');
+  if (card) card.remove();
+
+  _designData = { ..._stage3Data, colors: _selectedColors };
+  setStepActive('label_text_generation');
+  fetchStreamPhase2();
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   UI reset
+   ───────────────────────────────────────────────────────────────────────── */
+function resetUI() {
+  document.getElementById('resultsContainer').innerHTML = '';
+  document.getElementById('colorPickerCard')?.remove();
+  STAGE_ORDER.forEach(stage => {
+    const card = document.getElementById('step-' + stage);
+    const status = document.getElementById('status-' + stage);
+    if (card) card.className = 'step-card';
+    if (status) status.innerHTML = '';
+  });
+}
+</script>
+</body>
+</html>

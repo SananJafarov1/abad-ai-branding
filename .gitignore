@@ -1,0 +1,5 @@
+.env
+__pycache__/
+*.pyc
+create_docx.py
+ABAD_AI_Texniki_Teklif.docx
