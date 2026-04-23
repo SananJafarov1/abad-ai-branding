@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-_TEXT_MODEL  = "gemini-3.1-pro-preview"
+_TEXT_MODEL  = "gemini-3-flash-preview"
 _IMAGE_MODEL = "nano-banana-pro-preview"
 _JSON_SYSTEM_SUFFIX = (
     "Always respond in Azerbaijani. "
